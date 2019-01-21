@@ -113,7 +113,7 @@ module tetrahedron_frame(size=100, width = 2.0)
             }
             translate(
                 [corner[2][0] - width / 2.0,
-                 corner[2][1] - frame_height,
+                 corner[2][1] - equilateral_triangle_height(width),
                  0.0])
             {
                 tetrahedron(size =width);
@@ -130,7 +130,7 @@ module tetrahedron_frame(size=100, width = 2.0)
             }
             translate(
                 [corner[2][0] - width / 2.0,
-                 corner[2][1] - frame_height,
+                 corner[2][1] - equilateral_triangle_height(width),
                  corner[2][2]])
             {
                 tetrahedron(size = width);
@@ -172,7 +172,7 @@ module tetrahedron_frame(size=100, width = 2.0)
         hull() { // P2->P3
             translate(
                 [corner[2][0] - width / 2.0,
-                 corner[2][1] - frame_height,
+                 corner[2][1] - equilateral_triangle_height(width),
                  corner[2][2]])
             {
                 tetrahedron(size=width);
