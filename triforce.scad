@@ -18,15 +18,19 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-// 3D-Triforce that looks like a triangular pyramid
+// A 3D-Triforce that looks like a triangular pyramid
+// Developed with OpenSCAD 15.03-2 http://www.openscad.org/
+//
 
 // Parameters
 //
-edge_length = 100.0;
-frame_width = 4;
+edge_length = 100.0;            // distance from corner to corner
+frame_width = 5.0;              // frame thickness
+frame_standout = 0.0;           // standout the frame, try same as frame_width
 
+// ------------------Helper functions ----------------------------------------
 
-// height of tetrahedron
+// Height of tetrahedron
 //
 function tetrahedron_height(size) = sqrt(6.0) * size / 3.0;
 
@@ -59,6 +63,15 @@ function tetrahedron_corners(size) =
        [ tetrahedron_center(size)[0], tetrahedron_center(size)[1], tetrahedron_height(size) ],
     ];
 
+
+// Distance between 2 points
+//
+function dist(p1,p2) = sqrt(pow(p2[0]-p1[0],2) + pow(p2[1]- p1[1],2) +pow(p2[2]-p1[2],2));
+
+
+// ------------------Module section  -----------------------------------------
+
+
 // Tetrahedron is a 3 sided pyramid made from equilateral triangles.
 //
 module tetrahedron(size = 100)
@@ -78,22 +91,29 @@ module tetrahedron(size = 100)
 // Build a tetrahedron frame to generate solid joints between the triforce parts
 // The frame is build by placing small tetrahedrons with hull width in each
 // corner and then join the the convex hulls of each line together.
+// By setting standout you can make the fame stick out of the triangles.
+// This gives the triforce a nicer 3D look, but makes it a lot harder to print
+// as no even surfaces exists anymore that can be put onto the build plate.
 //
-module tetrahedron_frame(size=100, width = 2.0)
+module tetrahedron_frame(size=100, width = 2.0, standout = 0.0)
 {
     corner = tetrahedron_corners(size);
+    corner_standout = tetrahedron_corners(size + standout);
+
     frame_height = tetrahedron_height(width);
 
     union() {
 
         hull() { // P0->P1
+            translate(tetrahedron_center(size) * -1.0)
             translate(
                 [corner[0][0],
                  corner[0][1],
-                corner[0][2]])
+                 corner[0][2]])
             {
                 tetrahedron(size = width);
             }
+            translate(tetrahedron_center(size) * -1.0)
             translate(
                 [corner[1][0] - width,
                  corner[1][1],
@@ -101,9 +121,28 @@ module tetrahedron_frame(size=100, width = 2.0)
             {
                 tetrahedron(size = width);
             }
+
+            translate(tetrahedron_center(size + standout) * -1.0)
+            translate(
+                [corner_standout[0][0],
+                 corner_standout[0][1],
+                 corner_standout[0][2]])
+            {
+                tetrahedron(size = width);
+            }
+            translate(tetrahedron_center(size + standout) * -1.0)
+            translate(
+                [corner_standout[1][0] - width,
+                 corner_standout[1][1],
+                 corner_standout[1][2]])
+            {
+                tetrahedron(size = width);
+            }
+
         }
 
         hull() { // P0->P2
+            translate(tetrahedron_center(size) * -1.0)
             translate(
                 [corner[0][0],
                  corner[0][1],
@@ -111,6 +150,7 @@ module tetrahedron_frame(size=100, width = 2.0)
             {
                 tetrahedron(size = width);
             }
+            translate(tetrahedron_center(size) * -1.0)
             translate(
                 [corner[2][0] - width / 2.0,
                  corner[2][1] - equilateral_triangle_height(width),
@@ -118,9 +158,26 @@ module tetrahedron_frame(size=100, width = 2.0)
             {
                 tetrahedron(size =width);
             }
+            translate(tetrahedron_center(size + standout) * -1.0)
+            translate(
+                [corner_standout[0][0],
+                 corner_standout[0][1],
+                 corner_standout[0][2]])
+            {
+                tetrahedron(size = width);
+            }
+            translate(tetrahedron_center(size + standout) * -1.0)
+            translate(
+                [corner_standout[2][0] - width / 2.0,
+                 corner_standout[2][1] - equilateral_triangle_height(width),
+                 0.0])
+            {
+                tetrahedron(size =width);
+            }
         }
 
         hull() { // P1->P2
+            translate(tetrahedron_center(size) * -1.0)
             translate(
                 [corner[1][0]- width,
                  corner[1][1],
@@ -128,6 +185,7 @@ module tetrahedron_frame(size=100, width = 2.0)
             {
                 tetrahedron(size = width);
             }
+            translate(tetrahedron_center(size) * -1.0)
             translate(
                 [corner[2][0] - width / 2.0,
                  corner[2][1] - equilateral_triangle_height(width),
@@ -135,9 +193,26 @@ module tetrahedron_frame(size=100, width = 2.0)
             {
                 tetrahedron(size = width);
             }
+            translate(tetrahedron_center(size + standout) * -1.0)
+            translate(
+                [corner_standout[1][0]- width,
+                 corner_standout[1][1],
+                 corner_standout[1][2]])
+            {
+                tetrahedron(size = width);
+            }
+            translate(tetrahedron_center(size + standout) * -1.0)
+            translate(
+                [corner_standout[2][0] - width / 2.0,
+                 corner_standout[2][1] - equilateral_triangle_height(width),
+                 corner_standout[2][2]])
+            {
+                tetrahedron(size = width);
+            }
         }
 
         hull() { // P0->P3
+            translate(tetrahedron_center(size) * -1.0)
             translate(
                 [corner[0][0],
                  corner[0][1],
@@ -145,6 +220,7 @@ module tetrahedron_frame(size=100, width = 2.0)
             {
                tetrahedron(size = width);
             }
+            translate(tetrahedron_center(size) * -1.0)
             translate(
                 [corner[3][0] - tetrahedron_center(width)[0],
                  corner[3][1] - tetrahedron_center(width)[1],
@@ -152,14 +228,34 @@ module tetrahedron_frame(size=100, width = 2.0)
             {
                 tetrahedron(size = width);
             }
-        }
-
-        hull() { // P1->P3
+            translate(tetrahedron_center(size + standout) * -1.0)
             translate(
-                [corner[1][0]-width, corner[1][1], corner[1][2]])
+                [corner_standout[0][0],
+                 corner_standout[0][1],
+                 corner_standout[0][2]])
+            {
+               tetrahedron(size = width);
+            }
+            translate(tetrahedron_center(size + standout) * -1.0)
+            translate(
+                [corner_standout[3][0] - tetrahedron_center(width)[0],
+                 corner_standout[3][1] - tetrahedron_center(width)[1],
+                 corner_standout[3][2] - frame_height])
             {
                 tetrahedron(size = width);
             }
+        }
+
+        hull() { // P1->P3
+            translate(tetrahedron_center(size) * -1.0)
+            translate(
+                [corner[1][0] - width,
+                 corner[1][1],
+                 corner[1][2]])
+            {
+                tetrahedron(size = width);
+            }
+            translate(tetrahedron_center(size) * -1.0)
             translate(
                 [corner[3][0] - tetrahedron_center(width)[0],
                  corner[3][1] - tetrahedron_center(width)[1],
@@ -167,9 +263,26 @@ module tetrahedron_frame(size=100, width = 2.0)
             {
                 tetrahedron(size=width);
             }
+            translate(tetrahedron_center(size + standout) * -1.0)
+            translate(
+                [corner_standout[1][0] - width,
+                 corner_standout[1][1],
+                 corner_standout[1][2]])
+            {
+                tetrahedron(size = width);
+            }
+            translate(tetrahedron_center(size + standout) * -1.0)
+            translate(
+                [corner_standout[3][0] - tetrahedron_center(width)[0],
+                 corner_standout[3][1] - tetrahedron_center(width)[1],
+                 corner_standout[3][2] - frame_height])
+            {
+                tetrahedron(size=width);
+            }
         }
 
         hull() { // P2->P3
+            translate(tetrahedron_center(size) * -1.0)
             translate(
                 [corner[2][0] - width / 2.0,
                  corner[2][1] - equilateral_triangle_height(width),
@@ -177,6 +290,7 @@ module tetrahedron_frame(size=100, width = 2.0)
             {
                 tetrahedron(size=width);
             }
+            translate(tetrahedron_center(size) * -1.0)
             translate(
                 [corner[3][0] - tetrahedron_center(width)[0],
                  corner[3][1] - tetrahedron_center(width)[1],
@@ -184,11 +298,68 @@ module tetrahedron_frame(size=100, width = 2.0)
             {
                 tetrahedron(size = width);
             }
+            translate(tetrahedron_center(size + standout) * -1.0)
+            translate(
+                [corner_standout[2][0] - width / 2.0,
+                 corner_standout[2][1] - equilateral_triangle_height(width),
+                 corner_standout[2][2]])
+            {
+                tetrahedron(size=width);
+            }
+            translate(tetrahedron_center(size + standout) * -1.0)
+            translate(
+                [corner_standout[3][0] - tetrahedron_center(width)[0],
+                 corner_standout[3][1] - tetrahedron_center(width)[1],
+                 corner_standout[3][2] - frame_height])
+            {
+                tetrahedron(size = width);
+            }
         }
     }
 }
 
-function dist(p1,p2) = sqrt( pow(p1[0]-p2[0], 2) + pow(p1[1]-p2[1], 2) + pow(p1[2]-p2[2], 2) );
+// build the triforce
+//
+module triforce(length, fwidth, fextra = 0.0)
+{
+    translate(tetrahedron_center(length+fextra))
+    union() {
+
+        // frame structure
+        tetrahedron_frame(size = length, width = fwidth, standout=fextra);
+
+        // triangles
+        translate(tetrahedron_center(length) * -1.0)
+        union() {
+            // bottom 3 triangles
+            tetrahedron(size = length / 2.0);
+            translate(
+                [corner[1][0] - length / 2.0 - fextra,
+                 corner[1][1],
+                 0.0])
+            {
+                tetrahedron(size = length / 2);
+            }
+
+            translate(
+                [corner[0][0] + length / 4.0,
+                 equilateral_triangle_height(length / 2.0),
+                 0.0])
+            {
+                tetrahedron(size=length / 2);
+            }
+
+            // top one
+            translate(
+                [corner[0][0] + length / 4.0,
+                 tetrahedron_center(length / 2.0)[1],
+                 tetrahedron_height(length / 2,0)])
+            {
+                tetrahedron(size = length / 2.0);
+            }
+        }
+    }
+}
 
 echo ("Triforce dimensions :");
 corner = tetrahedron_corners(edge_length);
@@ -205,36 +376,16 @@ echo("p0->p3", dist(corner[0], corner[3]));
 echo("p1->p3", dist(corner[1], corner[3]));
 echo("p2->p3", dist(corner[2], corner[3]));
 
-// build the triforce
-//
-union() {
-
-    // frame structure
-    tetrahedron_frame(size = edge_length, width = frame_width);
-
-    // bottom 3 triangles
-    tetrahedron(size = edge_length / 2.0);
-    translate(
-        [corner[1][0] - edge_length / 2.0,
-         corner[1][1],
-         0.0])
-    {
-        tetrahedron(size = edge_length / 2);
-    }
-    translate(
-        [corner[0][0] + edge_length / 4.0,
-         equilateral_triangle_height(edge_length / 2.0),
-         0.0])
-    {
-        tetrahedron(size=edge_length / 2);
-    }
-
-    // top one
-    translate(
-        [corner[0][0] + edge_length / 4.0,
-         tetrahedron_center(edge_length / 2.0)[1],
-         tetrahedron_height(edge_length / 2,0)])
-    {
-         tetrahedron(size = edge_length / 2.0);
-    }
+if (frame_standout != 0.0)
+{
+    // if we standout the frame, turn the tri-force to have on edge in X-axis
+    // direction. Then print with supports.
+    // Recommend Cura settings for supports are:
+    // Support Placement: Everywhere, Support Overhang Angle: 40
+    // Support Pattern Concentric
+    //
+    rotate( [ atan(sqrt(2)), 0.0, 0.0])
+    triforce(length = edge_length - frame_standout, fwidth = frame_width, fextra = frame_standout);
+} else {
+    triforce(length = edge_length, fwidth = frame_width, fextra = frame_standout);
 }
