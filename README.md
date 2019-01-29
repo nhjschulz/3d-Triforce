@@ -29,7 +29,7 @@ tetrahedrons together:
 Playing with frame_standout can create other interesting 3D-Models. Here is an example
 with a huge frame_standout value of 36.0 mm:
 
-![STL result without frame standout] (/docs/triforce_frame36_10cm.png "10cm wide with large frame")
+![STL result without frame standout](/docs/triforce_frame36_10cm.png "10cm wide with a large frame")
 
 	
 ## Printing Recommendations
