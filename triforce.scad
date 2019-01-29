@@ -26,7 +26,7 @@
 //
 edge_length = 100.0;            // distance from corner to corner
 frame_width = 5.0;              // frame thickness
-frame_standout = 5.0;           // standout the frame, try same as frame_width
+frame_standout = 36.0;           // standout the frame, try same as frame_width
 
 // ------------------Helper functions ----------------------------------------
 
@@ -378,13 +378,6 @@ echo("p2->p3", dist(corner[2], corner[3]));
 
 if (frame_standout != 0.0)
 {
-    // if we standout the frame, turn the tri-force to have on edge in X-axis
-    // direction. Then print with supports.
-    // Recommend Cura settings for supports are:
-    // Support Placement: Everywhere, Support Overhang Angle: 40
-    // Support Pattern Concentric
-    //
-    //rotate( [ atan(sqrt(2)), 0.0, 0.0])
     triforce(length = edge_length - frame_standout, fwidth = frame_width, fextra = frame_standout);
 } else {
     triforce(length = edge_length, fwidth = frame_width, fextra = frame_standout);
