@@ -2,7 +2,7 @@
 
 A mathematical correct tetrahedron Triforce made with OpenSCAD for 3D-printing
 
-![Rendered 3D-Triforce Structure](/docs/triforce.png "Rendered 3D-Triforce Structure")
+![Printed 3D-Triforce Structure](/docs/triforce_printed.jpg "Printed 3D-Triforce Structure")
 
 The used OpenSCAD version was  2015.03-2.
 
