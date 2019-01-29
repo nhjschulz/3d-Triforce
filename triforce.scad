@@ -26,7 +26,7 @@
 //
 edge_length = 100.0;            // distance from corner to corner
 frame_width = 5.0;              // frame thickness
-frame_standout = 36.0;           // standout the frame, try same as frame_width
+frame_standout = 5.0;           // standout the frame, try same as frame_width
 
 // ------------------Helper functions ----------------------------------------
 
